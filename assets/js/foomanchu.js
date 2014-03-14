@@ -26,10 +26,12 @@
 	function renderTemplate(tmpl, obj){
 		var i = 0;
 
-		var ifmatches = tmpl.match(/\[{2}#if(.[^\]]+)\]\](.*)\[{2}\/if\]{2}/gmi);
+		var ifmatches = tmpl.match(/\[{2}#(.+)\s([^\]]+)\]{2}\n\t?(.+)\n\t?.+\[{2}\/\1\]{2}/gmi);
+		
+		console.log(ifmatches);
 
 		if(ifmatches){
-
+			/*
 			for(var i = 0; i <  ifmatches.length; i++){
 
 				var parts = tmpl.match(/\[{2}[^\[]#if(.[^\]]+)\]\](.*)\[{2}\/if\]{2}[^\]]/mi);
@@ -49,6 +51,7 @@
 					tmpl = tmpl.replace(parts[0], contents);
 				}
 			}
+			*/
 		}
 
 		var tags = tmpl.match(/\[{2}\s?(.[^\[]+)\s?\]{2}/gmi);
@@ -76,10 +79,10 @@
 		var tag = '';
 		for(key in escaped){
 			//console.log(escaped[tag]);
-			console.log(escaped[key]);
+			//console.log(escaped[key]);
 			tag = escaped[key].replace(/<script\stype=\'text\/x\-foomanchu\'>/, '[[');
 			tag = tag.replace(/<\/script>/, ']]');
-			console.log(tag);
+			//console.log(tag);
 
 			tmpl = tmpl.replace(escaped[key], tag);
 		}
