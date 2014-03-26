@@ -20,34 +20,34 @@
 			var tmpl = document.body.innerHTML;
 
 			document.body.innerHTML = "";
-			document.body.innerHTML = renderTemplate(tmpl, obj);
+			document.body.innerHTML = render(tmpl, obj);
 		}
 	}
 
-	function renderTemplate(tmpl, obj){
+	function render(tmpl, obj){
 		var i = 0;
 
 		var expressions = tmpl.match(/\[{2}#(.+)\s([^\]]+)\]{2}\n\t?(.+)\n\t?.+\[{2}\/\1\]{2}/gmi);
-		
-		for( var i = 0; i < expressions.length; i++){
+		if(expressions){
+			for( var i = 0; i < expressions.length; i++){
+				var parts = expressions[i].match(/\[{2}#(.+)\s([^\]]+)\]{2}\n\t?(.+)\n\t?.+\[{2}\/\1\]{2}/);
+				var clause    = parts[1],
+						condition = parts[2],
+						value     = parts[3];
 
-			var parts = expressions[i].match(/\[{2}#(.+)\s([^\]]+)\]{2}\n\t?(.+)\n\t?.+\[{2}\/\1\]{2}/);
-
-			var clause    = parts[1],
-					condition = parts[2],
-					value     = parts[3];
-
-			// only supporting if clause
-			if(clause == "if"){
-				if(condition in obj && obj[condition]){
-					tmpl = tmpl.replace(parts[0], value);
-				}else{
-					tmpl = tmpl.replace(parts[0], '');
+				// only supporting if clause
+				if(clause == "if"){
+					if(condition in obj && obj[condition]){
+						tmpl = tmpl.replace(parts[0], value);
+					}else{
+						tmpl = tmpl.replace(parts[0], '');
+					}
 				}
 			}
 		}
-	
+
 		var tags = tmpl.match(/\[{2}\s?(.[^\[]+)\s?\]{2}/gmi);
+
 		var escape = ''; // placeholder for escaped tags
 
 		for(key in tags){
@@ -61,6 +61,8 @@
 			for(var symbol in obj){
 				if(tag == symbol){
 					tmpl = tmpl.replace(tags[key], obj[symbol]);
+				}else{
+					tmpl = tmpl.replace(tags[key], '');
 				}
 			}	
 		}
@@ -74,6 +76,9 @@
 			tag = tag.replace(/<\/script>/, ']]');
 			tmpl = tmpl.replace(escaped[key], tag);
 		}
+
+		//finally erase any 
+
 		return tmpl;
 	}
 }());
